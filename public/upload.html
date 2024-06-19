@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Requirement Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="file"],
+        .form-group select {
+            width: calc(100% - 16px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+        .form-group input[type="submit"],
+        .form-group input[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .form-group input[type="submit"]:hover,
+        .form-group input[type="button"]:hover {
+            background-color: #45a049;
+        }
+        .form-group input[type="file"] {
+            padding: 8px;
+        }
+        input[type="file"]::-webkit-file-upload-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="file"]::-webkit-file-upload-button:hover {
+            background: #45a049;
+        }
+        .error {
+            color: red;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Software Requirement Upload</h2>
+        <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="company">Company Name:</label>
+                <input type="text" id="company" name="company" required>
+            </div>
+            <div class="form-group">
+                <label for="contact">Contact Number:</label>
+                <input type="text" id="contact" name="contact" required>
+                <span id="contactError" class="error">Please enter a valid ten-digit number.</span>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <span id="emailError" class="error">Please enter a valid email address.</span>
+            </div>
+            <div class="form-group">
+                <label for="stack">Software Stack:</label>
+                <select id="stack" name="stack" required>
+                    <option value="">Select a stack...</option>
+                    <option value="MERN">MERN</option>
+                    <option value="MEAN">MEAN</option>
+                    <option value="LAMP">LAMP</option>
+                    <option value="Django">Django</option>
+                    <option value="Ruby on Rails">Ruby on Rails</option>
+                    <option value="Spring Boot">Spring Boot</option>
+                    <option value="Flutter">Flutter</option>
+                    <option value="React Native">React Native</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="diagrams">Software Diagrams (PNG format):</label>
+                <input type="file" id="diagrams" name="diagrams" accept=".png" multiple required>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Upload">
+                <input type="button" value="Logout" onclick="logout()">
+            </div>
+        </form>
+    </div>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const form = document.getElementById('uploadForm');
+            const formData = new FormData(form);
+
+            const contactInput = document.getElementById('contact');
+            const contactValue = contactInput.value.trim();
+            const contactError = document.getElementById('contactError');
+
+            const emailInput = document.getElementById('email');
+            const emailValue = emailInput.value.trim();
+            const emailError = document.getElementById('emailError');
+
+            // Validate contact number
+            if (!/^\d{10}$/.test(contactValue)) {
+                contactError.style.display = 'block';
+                return;
+            } else {
+                contactError.style.display = 'none';
+            }
+
+            // Validate email
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+                emailError.style.display = 'block';
+                return;
+            } else {
+                emailError.style.display = 'none';
+            }
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Upload successful!');
+                    // Optionally, redirect the user or perform other actions
+                } else {
+                    const errorMessage = await response.text();
+                    alert('Upload failed: ' + errorMessage);
+                }
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                alert('An error occurred while uploading the file.');
+            }
+        });
+
+        function logout() {
+            window.location.href = '/logout';
+        }
+    </script>
+</body>
+</html>

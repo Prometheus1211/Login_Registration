@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin - Download Files</title>
+    <script>
+        async function loadFiles() {
+            const response = await fetch('/admin/files');
+            const files = await response.json();
+
+            const fileList = document.getElementById('file-list');
+            files.forEach(file => {
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = `/admin/files/${file.fileId}`;
+                link.textContent = file.filename;
+                listItem.appendChild(link);
+                fileList.appendChild(listItem);
+            });
+        }
+
+        window.onload = loadFiles;
+    </script>
+</head>
+<body>
+    <h1>Admin - Download Files</h1>
+    <ul id="file-list"></ul>
+</body>
+</html>
